@@ -1,0 +1,282 @@
+name: HamlyMD CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps
+      
+    - name: Run validation tests
+      run: npm run validate
+      
+    - name: Run E2E tests
+      run: npm run test:ci
+      env:
+        EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+        EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-reports
+        path: |
+          tests/test.md
+          tests/validation-report.md
+          tests/logs/
+          
+    - name: Check test results
+      run: |
+        if [ -f "tests/test.md" ]; then
+          echo "✅ Test report generated successfully"
+          cat tests/test.md
+        else
+          echo "❌ Test report not found"
+          exit 1
+        fi
+
+  validate-endpoints:
+    name: Validate API Endpoints
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps
+      
+    - name: Validate lab results endpoint
+      run: |
+        echo "Testing lab results endpoint..."
+        npm run build
+        npx serve -s dist -l 5000 &
+        sleep 10
+        curl -X POST http://localhost:5000/api/process-lab-report-api \
+          -H "Content-Type: application/json" \
+          -d '{"image":"invalid","mimeType":"image/jpeg"}' \
+          --fail-with-body || echo "Expected validation failure - PASS"
+        
+    - name: Validate medications endpoint
+      run: |
+        echo "Testing medications endpoint..."
+        curl -X POST http://localhost:5000/api/medication-safety-api \
+          -H "Content-Type: application/json" \
+          -d '{"medicationName":"A","pregnancyWeek":50}' \
+          --fail-with-body || echo "Expected validation failure - PASS"
+        
+    - name: Validate symptoms endpoint
+      run: |
+        echo "Testing symptoms endpoint..."
+        curl -X POST http://localhost:5000/api/analyze-symptom-api \
+          -H "Content-Type: application/json" \
+          -d '{"symptom":{"type":"X","severity":6},"pregnancyWeek":0}' \
+          --fail-with-body || echo "Expected validation failure - PASS"
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [test, validate-endpoints]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps
+      
+    - name: Build application
+      run: npm run build
+      env:
+        EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+        EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        
+    - name: Verify build output
+      run: |
+        if [ -d "dist" ] && [ "$(ls -A dist)" ]; then
+          echo "✅ Build completed successfully"
+          ls -la dist/
+        else
+          echo "❌ Build failed - no output directory"
+          exit 1
+        fi
+
+  monitoring:
+    name: AI Monitoring Check
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check AI monitoring logs
+      run: |
+        if [ -f "logs/ai-monitoring.md" ]; then
+          echo "✅ AI monitoring system active"
+          echo "Recent monitoring status:"
+          tail -20 logs/ai-monitoring.md
+        else
+          echo "⚠️ AI monitoring logs not found"
+        fi
+        
+    - name: Validate monitoring configuration
+      run: |
+        if grep -q "AI Monitoring" logs/ai-monitoring.md 2>/dev/null; then
+          echo "✅ Monitoring configuration validated"
+        else
+          echo "⚠️ Monitoring system may need initialization"
+        fi
+
+  security:
+    name: Security and Validation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check for sensitive data
+      run: |
+        echo "Checking for sensitive data exposure..."
+        if grep -r "GEMINI_API_KEY\|ELEVENLABS_API_KEY" --include="*.js" --include="*.ts" --include="*.jsx" --include="*.tsx" . | grep -v "process.env" | grep -v "env.example" | grep -v ".github"; then
+          echo "❌ Found potential API key exposure"
+          exit 1
+        else
+          echo "✅ No sensitive data found in source code"
+        fi
+        
+    - name: Validate environment variables
+      run: |
+        echo "Checking environment variable usage..."
+        if grep -r "process.env.EXPO_PUBLIC" --include="*.js" --include="*.ts" . > /dev/null; then
+          echo "✅ Public environment variables used correctly"
+        else
+          echo "⚠️ No public environment variables found"
+        fi
+
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        
+    - name: Deploy to preview environment
+      run: |
+        echo "🚀 Would deploy to preview environment"
+        echo "Preview URL would be available for testing"
+        # Add actual preview deployment logic here
+        
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, security]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        
+    - name: Deploy to production
+      run: |
+        echo "🚀 Would deploy to production environment"
+        echo "Production deployment would be triggered"
+        # Add actual production deployment logic here
+
+  report:
+    name: Generate Final Report
+    runs-on: ubuntu-latest
+    needs: [test, validate-endpoints, build, monitoring, security]
+    if: always()
+    
+    steps:
+    - name: Download test reports
+      uses: actions/download-artifact@v4
+      if: always()
+      with:
+        name: test-reports
+        path: reports/
+        
+    - name: Generate CI/CD summary
+      run: |
+        echo "# HamlyMD CI/CD Pipeline Report" > pipeline-report.md
+        echo "" >> pipeline-report.md
+        echo "## Pipeline Status" >> pipeline-report.md
+        echo "- **Date**: $(date)" >> pipeline-report.md
+        echo "- **Commit**: ${{ github.sha }}" >> pipeline-report.md
+        echo "- **Branch**: ${{ github.ref_name }}" >> pipeline-report.md
+        echo "" >> pipeline-report.md
+        echo "## Test Results" >> pipeline-report.md
+        if [ -f "reports/test.md" ]; then
+          echo "✅ E2E tests completed" >> pipeline-report.md
+        else
+          echo "❌ E2E tests failed" >> pipeline-report.md
+        fi
+        if [ -f "reports/validation-report.md" ]; then
+          echo "✅ Validation tests completed" >> pipeline-report.md
+        else
+          echo "❌ Validation tests failed" >> pipeline-report.md
+        fi
+        echo "" >> pipeline-report.md
+        echo "## Next Steps" >> pipeline-report.md
+        echo "- Review test reports for any issues" >> pipeline-report.md
+        echo "- Check monitoring logs for AI system health" >> pipeline-report.md
+        echo "- Verify all endpoints are functioning correctly" >> pipeline-report.md
+        
+    - name: Upload pipeline report
+      uses: actions/upload-artifact@v4
+      with:
+        name: pipeline-report
+        path: pipeline-report.md

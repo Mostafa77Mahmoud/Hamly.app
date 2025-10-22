@@ -1,0 +1,15 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "تطبيق صحي شامل مبني بـ React Native و Expo لإدارة صحة الحمل والأدوية والتحاليل والأعراض مع تحليلات الذكاء الاصطناعي.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^10.1.0"
+  }
+}
