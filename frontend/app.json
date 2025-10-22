@@ -1,0 +1,82 @@
+{
+  "expo": {
+    "jsEngine": "hermes",
+    "newArchEnabled": true,
+    "name": "Hamly",
+    "slug": "hamly-md",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/app-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hamlymd.app"
+    },
+    "android": {
+      "package": "com.hamlymd.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/app-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "dangerousAllowMutuallyExclusiveExtensions": true,
+      "build": {
+        "babel": {
+          "include": [
+            "@supabase/supabase-js"
+          ]
+        }
+      }
+    },
+    "runtimeVersion": "1.0.0",
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Hamly to access your camera to take photos of lab reports and documents."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "documentsPermission": "Allow Hamly to access your documents to upload lab reports."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/app-icon.png",
+          "color": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c20d667e-0a29-4ad6-9042-ce3ef763d504"
+      }
+    }
+  }
+}
