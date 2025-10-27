@@ -37,7 +37,8 @@ import ExtractedDataReview from "@/components/ExtractedDataReview";
 import LocalizedHeader from "@/components/LocalizedHeader";
 import { useData } from "@/contexts/DataContext";
 import LanguageToggle from "@/components/LanguageToggle";
-import ModernHeader from "@/components/ModernHeader"; // Assuming ModernHeader is in this path
+import ModernHeader from "@/components/ModernHeader";
+import IconButton from "@/components/IconButton";
 
 export default function LabResultsScreen() {
   const router = useRouter();
@@ -563,25 +564,26 @@ export default function LabResultsScreen() {
         backgroundColor="#FFFFFF"
         textColor="#1A1A1A"
         rightActions={[
+          <IconButton
+            key="upload"
+            icon={<Icon name="upload" size={20} color={COLORS.white} />}
+            onPress={() => setUploaderVisible(true)}
+            variant="primary"
+            size="small"
+            accessibilityLabel={t("uploadLabReport")}
+          />,
+          <IconButton
+            key="add"
+            icon={<Icon name="add" size={22} color={COLORS.white} />}
+            onPress={() => setModalVisible(true)}
+            variant="primary"
+            size="small"
+            accessibilityLabel={t("addManually")}
+          />,
           <LanguageToggle
             key="languageToggle"
             onLanguageChange={handleLanguageChange}
-          />,
-          <Button
-            key="uploadLabReport"
-            title={t("uploadLabReport")}
-            onPress={() => setUploaderVisible(true)}
-            variant="primary"
-            style={styles.headerButton}
-            icon={<Icon name="upload" size={20} color="#FFFFFF" />}
-          />,
-          <Button
-            key="addManually"
-            title={t("addManually")}
-            onPress={() => setModalVisible(true)}
-            variant="primary"
-            style={styles.headerButton}
-            icon={<Icon name="add" size={24} color="#FFFFFF" />}
+            compact={true}
           />,
         ]}
       />
@@ -805,9 +807,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerButton: {
-    padding: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     justifyContent: "center",
     alignItems: "center",
+    minHeight: 32,
   },
   content: {
     flex: 1,

@@ -1,4 +1,4 @@
-modules = ["nodejs-22"]
+modules = ["nodejs-20", "ruby-3.2", "swift-5.8"]
 [agent]
 expertMode = true
 
@@ -30,6 +30,15 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "ss"
+mode = "sequential"
+author = 48849971
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx expo start --web --clear --port 5000"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
@@ -41,6 +50,18 @@ externalPort = 3000
 [[ports]]
 localPort = 8081
 externalPort = 8081
+
+[[ports]]
+localPort = 34227
+externalPort = 3003
+
+[[ports]]
+localPort = 35205
+externalPort = 3001
+
+[[ports]]
+localPort = 46649
+externalPort = 3002
 
 [deployment]
 deploymentTarget = "autoscale"

@@ -21,6 +21,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { supabase } from '@/utils/supabase';
 import LanguageToggle from '@/components/LanguageToggle';
+import { responsiveFontSize, responsiveIconSize, scale } from '@/utils/responsive';
 
 export default function SetupScreen() {
   const [step, setStep] = useState(1);
@@ -221,7 +222,7 @@ export default function SetupScreen() {
         {step === 1 && (
           <View style={styles.stepContainer}>
             <View style={styles.iconContainer}>
-              <Icon name="medical-services" size={48} color="#E91E63" />
+              <Icon name="medical-services" size={responsiveIconSize(44)} color="#E91E63" />
             </View>
             <Text style={styles.stepTitle}>
               {currentLang === 'ar' ? 'مرحباً بك في HamlyMD!' : 'Welcome to HamlyMD!'}
@@ -252,7 +253,7 @@ export default function SetupScreen() {
         {step === 2 && (
           <View style={styles.stepContainer}>
             <View style={styles.iconContainer}>
-              <Icon name="event" size={48} color="#E91E63" />
+              <Icon name="event" size={responsiveIconSize(44)} color="#E91E63" />
             </View>
             <Text style={styles.stepTitle}>
               {currentLang === 'ar' ? 'متى بدأت آخر دورة شهرية؟' : 'When did your last period start?'}
@@ -366,7 +367,7 @@ export default function SetupScreen() {
         {step === 3 && (
           <View style={styles.stepContainer}>
             <View style={styles.iconContainer}>
-              <Icon name="arrow-forward" size={48} color="#E91E63" />
+              <Icon name="arrow-forward" size={responsiveIconSize(44)} color="#E91E63" />
             </View>
             <Text style={styles.stepTitle}>
               {currentLang === 'ar' ? 'أوشكنا على الانتهاء!' : 'Almost done!'}
@@ -462,7 +463,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   progressText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     color: '#666666',
     fontFamily: 'Inter-Medium',
   },
@@ -475,27 +476,27 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   iconContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: scale(84),
+    height: scale(84),
+    borderRadius: scale(42),
     backgroundColor: '#FFE8F1',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
   },
   stepTitle: {
-    fontSize: 28,
+    fontSize: responsiveFontSize(24),
     fontFamily: 'Inter-Bold',
     color: '#1A1A1A',
     textAlign: 'center',
     marginBottom: 12,
   },
   stepSubtitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontFamily: 'Inter-Regular',
     color: '#666666',
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: responsiveFontSize(22),
     marginBottom: 32,
     paddingHorizontal: 20,
   },
@@ -503,15 +504,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   helpText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     fontFamily: 'Inter-Regular',
     color: '#999999',
     textAlign: 'center',
     marginTop: 8,
-    lineHeight: 20,
+    lineHeight: responsiveFontSize(18),
   },
   dateLabel: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontFamily: 'Inter-SemiBold',
     color: '#333333',
     marginBottom: 12,
@@ -525,7 +526,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   datePickerLabel: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     fontFamily: 'Inter-Medium',
     color: '#666666',
     marginBottom: 8,
@@ -547,7 +548,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E91E63',
   },
   dateOptionText: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontFamily: 'Inter-Regular',
     color: '#333333',
     textAlign: 'center',
@@ -563,7 +564,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectedDateText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     fontFamily: 'Inter-Medium',
     color: '#2E7D32',
     textAlign: 'center',
@@ -575,13 +576,13 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   summaryTitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontFamily: 'Inter-SemiBold',
     color: '#333333',
     marginBottom: 8,
   },
   summaryText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     fontFamily: 'Inter-Regular',
     color: '#666666',
     marginBottom: 4,
@@ -599,7 +600,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   skipText: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontFamily: 'Inter-Medium',
     color: '#666666',
   },

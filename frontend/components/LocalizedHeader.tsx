@@ -12,6 +12,7 @@ import {
 import { useIsRTL } from "@/utils/useIsRTL";
 import { t } from "@/utils/i18n";
 import { createShadowStyle } from "@/utils/shadowStyles";
+import { responsiveFontSize, scale } from "@/utils/responsive";
 
 interface LocalizedHeaderProps {
   title: string;
@@ -79,14 +80,14 @@ export default function LocalizedHeader({
 
     return (
       <View style={styles.logoContainer}>
-        {" "}
+        
         <Image
           source={require("@/assets/images/hamly transparent logo.png")}
           style={styles.logo}
           resizeMode="contain"
           accessibilityRole="image"
           accessibilityLabel="HamlyMD Logo"
-        />{" "}
+        />
       </View>
     );
   }, [leading, showLogo]);
@@ -99,7 +100,7 @@ export default function LocalizedHeader({
         disabled={!onTitlePress}
         activeOpacity={onTitlePress ? 0.7 : 1}
       >
-        {" "}
+        
         <Text
           style={
             [
@@ -112,9 +113,9 @@ export default function LocalizedHeader({
           numberOfLines={2}
           accessibilityRole="header"
         >
-          {" "}
-          {title}{" "}
-        </Text>{" "}
+          
+          {title}
+        </Text>
         {subtitle && (
           <Text
             style={
@@ -128,10 +129,10 @@ export default function LocalizedHeader({
             numberOfLines={1}
             accessibilityRole="text"
           >
-            {" "}
-            {subtitle}{" "}
+            
+            {subtitle}
           </Text>
-        )}{" "}
+        )}
       </TouchableOpacity>
     ),
     [
@@ -153,44 +154,44 @@ export default function LocalizedHeader({
 
     return (
       <View style={styles.actionsContainer}>
-        {" "}
+        
         {allActions.map((action, index) => (
           <View key={index} style={styles.actionItem}>
-            {" "}
-            {action}{" "}
+            
+            {action}
           </View>
-        ))}{" "}
+        ))}
       </View>
     );
   }, [actions, rightActions]);
 
   return (
     <View style={headerStyle}>
-      {" "}
+      
       <View style={styles.content}>
-        {" "}
+        
         {/* Golden Rule Structure: Left Slot | Center Slot (flex:1, centered) | Right Slot */}
-        {/* Left Slot */}{" "}
+        {/* Left Slot */}
         <View style={styles.leftSlot}>
-          {" "}
+          
           {isRTL
             ? // RTL: Actions go to left
               actionsSection
             : // LTR: Leading element goes to left
               leadingElement && (
                 <View style={styles.leadingContainer}> {leadingElement} </View>
-              )}{" "}
-        </View>{" "}
-        {/* Center Slot - Title (always centered horizontally) */}{" "}
+              )}
+        </View>
+        {/* Center Slot - Title (always centered horizontally) */}
         <View style={styles.centerSlot}>
-          {" "}
+          
           <TouchableOpacity
             style={[styles.titleContainer, styles.centeredTitleContainer]}
             onPress={onTitlePress}
             disabled={!onTitlePress}
             activeOpacity={onTitlePress ? 0.7 : 1}
           >
-            {" "}
+            
             <Text
               style={
                 [
@@ -203,9 +204,9 @@ export default function LocalizedHeader({
               numberOfLines={2}
               accessibilityRole="header"
             >
-              {" "}
-              {title}{" "}
-            </Text>{" "}
+              
+              {title}
+            </Text>
             {subtitle && (
               <Text
                 style={
@@ -219,29 +220,29 @@ export default function LocalizedHeader({
                 numberOfLines={1}
                 accessibilityRole="text"
               >
-                {" "}
-                {subtitle}{" "}
+                
+                {subtitle}
               </Text>
-            )}{" "}
-          </TouchableOpacity>{" "}
-        </View>{" "}
-        {/* Right Slot */}{" "}
+            )}
+          </TouchableOpacity>
+        </View>
+        {/* Right Slot */}
         <View style={styles.rightSlot}>
-          {" "}
+          
           {isRTL
             ? // RTL: Leading element goes to right
               leadingElement && (
                 <View
                   style={[styles.leadingContainer, styles.rtlLeadingContainer]}
                 >
-                  {" "}
-                  {leadingElement}{" "}
+                  
+                  {leadingElement}
                 </View>
               )
             : // LTR: Actions go to right
-              actionsSection}{" "}
-        </View>{" "}
-      </View>{" "}
+              actionsSection}
+        </View>
+      </View>
     </View>
   );
 }
@@ -251,16 +252,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
-    paddingTop: Platform.OS === "ios" ? 44 : 24,
-    paddingBottom: 16,
+    paddingTop: Platform.OS === "ios" ? 36 : 16,
+    paddingBottom: 12,
   },
 
   content: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 56,
+    minHeight: 48,
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
 
   // Variants
@@ -311,22 +312,22 @@ const styles = StyleSheet.create({
   },
 
   logoContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: scale(46),
+    height: scale(46),
+    borderRadius: 8,
     backgroundColor: "#F8F9FA",
     alignItems: "center",
     justifyContent: "center",
   },
 
   logo: {
-    width: 40,
-    height: 40,
+    width: scale(38),
+    height: scale(38),
   },
 
   // Golden Rule Layout Slots
   leftSlot: {
-    minWidth: 60,
+    minWidth: 40,
     justifyContent: "center",
     alignItems: "flex-start",
   },
@@ -334,11 +335,11 @@ const styles = StyleSheet.create({
   centerSlot: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
   },
 
   rightSlot: {
-    minWidth: 60,
+    minWidth: 40,
     justifyContent: "center",
     alignItems: "flex-end",
   },
@@ -359,10 +360,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    fontSize: responsiveFontSize(20),
     fontWeight: "600",
     color: "#1A1A1A",
-    lineHeight: 28,
+    lineHeight: responsiveFontSize(26),
     marginBottom: 4,
     letterSpacing: 0.2,
   },
@@ -372,27 +373,27 @@ const styles = StyleSheet.create({
   },
 
   defaultTitle: {
-    fontSize: 20,
+    fontSize: responsiveFontSize(18),
   },
 
   largeTitle: {
-    fontSize: 24,
+    fontSize: responsiveFontSize(22),
     fontWeight: "800",
   },
 
   compactTitle: {
-    fontSize: 18,
+    fontSize: responsiveFontSize(16),
   },
 
   minimalTitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(14),
     fontWeight: "600",
   },
 
   subtitle: {
-    fontSize: 15,
+    fontSize: responsiveFontSize(14),
     color: "#666666",
-    lineHeight: 20,
+    lineHeight: responsiveFontSize(18),
     marginTop: 2,
     letterSpacing: 0.1,
   },
@@ -402,19 +403,19 @@ const styles = StyleSheet.create({
   },
 
   defaultSubtitle: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
   },
 
   largeSubtitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
   },
 
   compactSubtitle: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(11),
   },
 
   minimalSubtitle: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(11),
     color: "#999999",
   },
 
@@ -426,10 +427,10 @@ const styles = StyleSheet.create({
   },
 
   actionItem: {
-    minWidth: 44,
-    minHeight: 44,
+    minWidth: 36,
+    minHeight: 36,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 6,
   },
 });

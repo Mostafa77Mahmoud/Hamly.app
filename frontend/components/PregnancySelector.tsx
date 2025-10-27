@@ -187,80 +187,80 @@ export default function PregnancySelector({
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        {" "}
-        <Text style={styles.loadingText}>{t("loading")}...</Text>{" "}
+        
+        <Text style={styles.loadingText}>{t("loading")}...</Text>
       </View>
     );
   }
 
   return (
     <>
-      {" "}
+      
       <TouchableOpacity
         style={styles.selector}
         onPress={() => setModalVisible(true)}
       >
-        {" "}
+        
         <View style={styles.selectorContent}>
-          {" "}
-          <Icon name="pregnant-woman" size={20} color="#E91E63" />{" "}
+          
+          <Icon name="pregnant-woman" size={20} color="#E91E63" />
           <View style={styles.selectorInfo}>
-            {" "}
+            
             {activePregnancy ? (
               <>
-                {" "}
+                
                 <Text style={styles.selectorTitle}>
                   {activePregnancy.name}
-                </Text>{" "}
+                </Text>
                 <Text style={styles.selectorSubtitle}>
-                  {" "}
-                  {getGestationalInfo(activePregnancy)}{" "}
-                </Text>{" "}
+                  
+                  {getGestationalInfo(activePregnancy)}
+                </Text>
               </>
             ) : (
               <>
-                {" "}
+                
                 <Text style={styles.selectorTitle}>
                   {t("selectPregnancy")}
-                </Text>{" "}
+                </Text>
                 <Text style={styles.selectorSubtitle}>
                   {t("noActivePregnancy")}
-                </Text>{" "}
+                </Text>
               </>
-            )}{" "}
-          </View>{" "}
-          <ChevronDown size={20} color="#666666" />{" "}
-        </View>{" "}
-      </TouchableOpacity>{" "}
+            )}
+          </View>
+          <ChevronDown size={20} color="#666666" />
+        </View>
+      </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        {" "}
+        
         <View style={styles.modalOverlay}>
-          {" "}
+          
           <View style={styles.modalContent}>
-            {" "}
+            
             <View style={styles.modalHeader}>
-              {" "}
+              
               <Text style={styles.modalTitle}>
                 {t("managePregnancies")}
-              </Text>{" "}
+              </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                {" "}
-                <Text style={styles.closeButton}>✕</Text>{" "}
-              </TouchableOpacity>{" "}
-            </View>{" "}
+                
+                <Text style={styles.closeButton}>✕</Text>
+              </TouchableOpacity>
+            </View>
             <ScrollView style={styles.modalBody}>
-              {" "}
+              
               {pregnancies.length > 0 && (
                 <View style={styles.section}>
-                  {" "}
+                  
                   <Text style={styles.sectionTitle}>
                     {t("existingPregnancies")}
-                  </Text>{" "}
+                  </Text>
                   {pregnancies.map((pregnancy) => (
                     <TouchableOpacity
                       key={pregnancy.id}
@@ -270,47 +270,47 @@ export default function PregnancySelector({
                       ]}
                       onPress={() => switchPregnancy(pregnancy)}
                     >
-                      {" "}
+                      
                       <View style={styles.pregnancyInfo}>
-                        {" "}
+                        
                         <Text
                           style={[
                             styles.pregnancyName,
                             pregnancy.isActive && styles.activePregnancyName,
                           ]}
                         >
-                          {" "}
-                          {pregnancy.name}{" "}
-                        </Text>{" "}
+                          
+                          {pregnancy.name}
+                        </Text>
                         <Text style={styles.pregnancyDetails}>
-                          {" "}
-                          {getGestationalInfo(pregnancy)}{" "}
-                        </Text>{" "}
+                          
+                          {getGestationalInfo(pregnancy)}
+                        </Text>
                         <Text style={styles.pregnancyDate}>
-                          {" "}
-                          {t("due")}:{" "}
+                          
+                          {t("due")}:
                           {new Date(
                             pregnancy.dueDate,
-                          ).toLocaleDateString()}{" "}
-                        </Text>{" "}
-                      </View>{" "}
+                          ).toLocaleDateString()}
+                        </Text>
+                      </View>
                       {pregnancy.isActive && (
                         <View style={styles.activeBadge}>
-                          {" "}
+                          
                           <Text style={styles.activeBadgeText}>
                             {t("active")}
-                          </Text>{" "}
+                          </Text>
                         </View>
-                      )}{" "}
+                      )}
                     </TouchableOpacity>
-                  ))}{" "}
+                  ))}
                 </View>
-              )}{" "}
+              )}
               <View style={styles.section}>
-                {" "}
+                
                 <Text style={styles.sectionTitle}>
                   {t("addNewPregnancy")}
-                </Text>{" "}
+                </Text>
                 <Input
                   label={t("pregnancyName")}
                   value={newPregnancy.name}
@@ -319,7 +319,7 @@ export default function PregnancySelector({
                   }
                   placeholder={t("pregnancyNamePlaceholder")}
                   required
-                />{" "}
+                />
                 <Input
                   label={t("lmp")}
                   value={newPregnancy.lastMenstrualPeriod}
@@ -331,7 +331,7 @@ export default function PregnancySelector({
                   }
                   placeholder="YYYY-MM-DD"
                   required
-                />{" "}
+                />
                 <Input
                   label={t("notes")}
                   value={newPregnancy.notes}
@@ -340,19 +340,19 @@ export default function PregnancySelector({
                   }
                   placeholder={t("pregnancyNotesPlaceholder")}
                   multiline
-                />{" "}
+                />
                 <View style={styles.infoBox}>
-                  {" "}
-                  <Calendar size={16} color="#E91E63" />{" "}
+                  
+                  <Calendar size={16} color="#E91E63" />
                   <Text style={styles.infoText}>
-                    {" "}
-                    {t("dueDateCalculation")}{" "}
-                  </Text>{" "}
-                </View>{" "}
-              </View>{" "}
-            </ScrollView>{" "}
+                    
+                    {t("dueDateCalculation")}
+                  </Text>
+                </View>
+              </View>
+            </ScrollView>
             <View style={styles.modalFooter}>
-              {" "}
+              
               <Button
                 title={t("cancel")}
                 onPress={() => setModalVisible(false)}
@@ -361,7 +361,7 @@ export default function PregnancySelector({
                   flex: 1,
                   ...(isRTL() ? { marginLeft: 8 } : { marginRight: 8 }),
                 }}
-              />{" "}
+              />
               <Button
                 title={t("addPregnancy")}
                 onPress={addPregnancy}
@@ -369,11 +369,11 @@ export default function PregnancySelector({
                   flex: 1,
                   ...(isRTL() ? { marginRight: 8 } : { marginLeft: 8 }),
                 }}
-              />{" "}
-            </View>{" "}
-          </View>{" "}
-        </View>{" "}
-      </Modal>{" "}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }

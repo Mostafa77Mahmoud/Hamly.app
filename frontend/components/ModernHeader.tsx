@@ -10,12 +10,14 @@ import {
   Platform,
   StatusBar,
   SafeAreaView,
+  useWindowDimensions,
 } from "react-native";
 import { useIsRTL } from "@/utils/useIsRTL";
 import { t } from "@/utils/i18n";
 import { COLORS, SPACING, TYPOGRAPHY } from "@/utils/modernStyles";
 import { createShadowStyle } from "@/utils/shadowStyles";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { responsiveIconSize, responsiveFontSize, scale } from "@/utils/responsive";
 
 interface ModernHeaderProps {
   title: string;
@@ -61,10 +63,17 @@ export default function ModernHeader({
   borderBottom = true,
 }: ModernHeaderProps) {
   const isRTL = useIsRTL();
+  const { width } = useWindowDimensions();
+  
+  // Use runtime window dimensions instead of module-level static value
+  const isMobileSize = width < 768;
 
   // حساب الارتفاع الآمن للـ status bar
   const statusBarHeight =
     Platform.OS === "ios" ? 44 : StatusBar.currentHeight || 24;
+
+  // Generate dynamic styles based on current screen size
+  const styles = useMemo(() => getStyles(isMobileSize), [isMobileSize]);
 
   // تحديد أنماط الحاوية الرئيسية
   const containerStyle = useMemo(
@@ -72,13 +81,13 @@ export default function ModernHeader({
       styles.container,
       {
         backgroundColor,
-        paddingTop: statusBarHeight,
+        paddingTop: isMobileSize ? Math.min(statusBarHeight, 20) : 0,
       },
       elevation && styles.elevated,
       borderBottom && styles.bordered,
       style,
     ],
-    [backgroundColor, statusBarHeight, elevation, borderBottom, style],
+    [backgroundColor, statusBarHeight, isMobileSize, elevation, borderBottom, style, styles],
   );
 
   // تحديد اتجاه المحتوى
@@ -111,12 +120,11 @@ export default function ModernHeader({
           onPress={onBackPress}
           activeOpacity={0.7}
         >
-          {" "}
           <Icon
             name={isRTL ? "arrow-forward" : "arrow-back"}
-            size={24}
+            size={responsiveIconSize(24)}
             color={textColor}
-          />{" "}
+          />
         </TouchableOpacity>
       );
     }
@@ -129,8 +137,7 @@ export default function ModernHeader({
           activeOpacity={onLeftPress ? 0.7 : 1}
           disabled={!onLeftPress}
         >
-          {" "}
-          {leftElement}{" "}
+          {leftElement}
         </TouchableOpacity>
       );
     }
@@ -138,14 +145,13 @@ export default function ModernHeader({
     if (showLogo) {
       return (
         <View style={styles.logoContainer}>
-          {" "}
           <Image
-            source={require("@/assets/images/hamly transparent logo.png")}
+            source={require("@/assets/images/hamly-logo-transparent.png")}
             style={styles.logo}
             resizeMode="contain"
             accessibilityRole="image"
             accessibilityLabel={t("appLogoAlt")}
-          />{" "}
+          />
         </View>
       );
     }
@@ -159,6 +165,7 @@ export default function ModernHeader({
     showLogo,
     isRTL,
     textColor,
+    styles,
   ]);
 
   // عنصر الجانب الأيمن
@@ -168,14 +175,15 @@ export default function ModernHeader({
 
     if (actionsToRender && actionsToRender.length > 0) {
       return (
-        <View style={[styles.actionsContainer, contentDirection]}>
-          {" "}
+        <View style={[
+          styles.actionsContainer, 
+          contentDirection
+        ]}>
           {actionsToRender.map((action, index) => (
             <View key={index} style={styles.actionItem}>
-              {" "}
-              {action}{" "}
+              {action}
             </View>
-          ))}{" "}
+          ))}
         </View>
       );
     }
@@ -188,14 +196,13 @@ export default function ModernHeader({
           activeOpacity={onRightPress ? 0.7 : 1}
           disabled={!onRightPress}
         >
-          {" "}
-          {rightElement}{" "}
+          {rightElement}
         </TouchableOpacity>
       );
     }
 
     return <View style={styles.sideContainer} />;
-  }, [rightActions, actions, rightElement, onRightPress, contentDirection]);
+  }, [rightActions, actions, rightElement, onRightPress, contentDirection, isMobileSize, styles]);
 
   // منطقة العنوان
   const titleSection = useMemo(() => {
@@ -222,25 +229,22 @@ export default function ModernHeader({
           variant === "centered" && { alignItems: "center" },
         ]}
       >
-        {" "}
         <Text
           style={titleTextStyle}
           numberOfLines={variant === "large" ? 3 : 2}
           accessibilityRole="header"
         >
-          {" "}
-          {title}{" "}
-        </Text>{" "}
+          {title}
+        </Text>
         {subtitle && (
           <Text
             style={subtitleTextStyle}
             numberOfLines={2}
             accessibilityRole="text"
           >
-            {" "}
-            {subtitle}{" "}
+            {subtitle}
           </Text>
-        )}{" "}
+        )}
       </View>
     );
   }, [
@@ -251,202 +255,202 @@ export default function ModernHeader({
     textAlignment,
     titleStyle,
     subtitleStyle,
+    styles,
   ]);
 
   return (
     <View style={containerStyle}>
-      {" "}
       <View style={[styles.content, contentDirection]}>
-        {" "}
-        {/* الجانب الأيسر في LTR أو الأيمن في RTL */}{" "}
+        {/* الجانب الأيسر في LTR أو الأيمن في RTL */}
         <View style={[styles.sideSection, isRTL && styles.rtlSideSection]}>
-          {" "}
-          {isRTL ? rightSection : leftSection}{" "}
-        </View>{" "}
-        {/* منطقة العنوان */}{" "}
-        <View style={styles.titleSection}> {titleSection} </View>{" "}
-        {/* الجانب الأيمن في LTR أو الأيسر في RTL */}{" "}
+          {isRTL ? rightSection : leftSection}
+        </View>
+        {/* منطقة العنوان */}
+        <View style={styles.titleSection}>{titleSection}</View>
+        {/* الجانب الأيمن في LTR أو الأيسر في RTL */}
         <View style={[styles.sideSection, isRTL && styles.rtlSideSection]}>
-          {" "}
-          {isRTL ? leftSection : rightSection}{" "}
-        </View>{" "}
-      </View>{" "}
+          {isRTL ? leftSection : rightSection}
+        </View>
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#FFFFFF",
-    width: "100%",
-  },
+// Function to generate styles based on screen size
+function getStyles(isMobileSize: boolean) {
+  return StyleSheet.create({
 
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    minHeight: 56,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-  },
+    container: {
+      backgroundColor: "#FFFFFF",
+      width: "100%",
+    },
 
-  // الأقسام الجانبية
-  sideSection: {
-    minWidth: 56,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    content: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: isMobileSize ? 56 : 64,
+      paddingHorizontal: isMobileSize ? SPACING.sm : SPACING.md,
+      paddingVertical: 0,
+      gap: isMobileSize ? SPACING.xs : SPACING.sm,
+    },
 
-  rtlSideSection: {
-    alignItems: "center",
-  },
+    // الأقسام الجانبية
+    sideSection: {
+      minWidth: isMobileSize ? 32 : 40,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  sideContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 44,
-    minHeight: 44,
-  },
+    rtlSideSection: {
+      alignItems: "center",
+    },
 
-  sideButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-  },
+    sideContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      minWidth: isMobileSize ? 28 : 36,
+      minHeight: isMobileSize ? 28 : 36,
+    },
 
-  // منطقة الشعار
-  logoContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: "#F8F9FA",
-    alignItems: "center",
-    justifyContent: "center",
-    ...createShadowStyle({
-      color: "#000",
-      offset: { width: 0, height: 1 },
-      opacity: 0.1,
-      radius: 2,
-      elevation: 2,
-    }),
-  },
+    sideButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: isMobileSize ? 32 : 36,
+      height: isMobileSize ? 32 : 36,
+      borderRadius: isMobileSize ? 6 : 8,
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
 
-  logo: {
-    width: 40,
-    height: 40,
-  },
+    // منطقة الشعار
+    logoContainer: {
+      width: isMobileSize ? 56 : 72,
+      height: isMobileSize ? 56 : 72,
+      borderRadius: isMobileSize ? 10 : 12,
+      backgroundColor: "transparent",
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  // منطقة العنوان
-  titleSection: {
-    flex: 1,
-    paddingHorizontal: SPACING.sm,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    logo: {
+      width: isMobileSize ? 56 : 72,
+      height: isMobileSize ? 56 : 72,
+    },
 
-  titleContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
+    // منطقة العنوان
+    titleSection: {
+      flex: 1,
+      paddingHorizontal: isMobileSize ? 4 : SPACING.sm,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  // أنماط العناوين الأساسية
-  title: {
-    fontSize: TYPOGRAPHY.lg,
-    fontWeight: TYPOGRAPHY.semibold,
-    color: "#1A1A1A",
-    lineHeight: 28,
-    letterSpacing: 0.2,
-    marginBottom: 2,
-  },
+    titleContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+    },
 
-  subtitle: {
-    fontSize: TYPOGRAPHY.sm,
-    fontWeight: TYPOGRAPHY.normal,
-    color: "#666666",
-    lineHeight: 20,
-    letterSpacing: 0.1,
-    marginTop: 2,
-  },
+    // أنماط العناوين الأساسية
+    title: {
+      fontSize: isMobileSize ? responsiveFontSize(15) : responsiveFontSize(18),
+      fontWeight: TYPOGRAPHY.semibold,
+      color: "#1A1A1A",
+      lineHeight: isMobileSize ? responsiveFontSize(20) : responsiveFontSize(26),
+      letterSpacing: 0.2,
+      marginBottom: isMobileSize ? 0 : 2,
+    },
 
-  // متغيرات العناوين
-  defaultTitle: {
-    fontSize: TYPOGRAPHY.xl,
-    fontWeight: TYPOGRAPHY.semibold,
-  },
+    subtitle: {
+      fontSize: isMobileSize ? responsiveFontSize(11) : responsiveFontSize(14),
+      fontWeight: TYPOGRAPHY.normal,
+      color: "#666666",
+      lineHeight: isMobileSize ? responsiveFontSize(14) : responsiveFontSize(18),
+      letterSpacing: 0.1,
+      marginTop: isMobileSize ? 0 : 2,
+    },
 
-  largeTitle: {
-    fontSize: TYPOGRAPHY["2xl"],
-    fontWeight: TYPOGRAPHY.bold,
-    lineHeight: 34,
-  },
+    // متغيرات العناوين
+    defaultTitle: {
+      fontSize: responsiveFontSize(20),
+      fontWeight: TYPOGRAPHY.semibold,
+    },
 
-  minimalTitle: {
-    fontSize: TYPOGRAPHY.lg,
-    fontWeight: TYPOGRAPHY.medium,
-  },
+    largeTitle: {
+      fontSize: responsiveFontSize(24),
+      fontWeight: TYPOGRAPHY.bold,
+      lineHeight: responsiveFontSize(32),
+    },
 
-  centeredTitle: {
-    textAlign: "center",
-  },
+    minimalTitle: {
+      fontSize: responsiveFontSize(18),
+      fontWeight: TYPOGRAPHY.medium,
+    },
 
-  compactTitle: {
-    fontSize: TYPOGRAPHY.base,
-    fontWeight: TYPOGRAPHY.medium,
-  },
+    centeredTitle: {
+      textAlign: "center",
+    },
 
-  defaultSubtitle: {
-    fontSize: TYPOGRAPHY.sm,
-  },
+    compactTitle: {
+      fontSize: responsiveFontSize(16),
+      fontWeight: TYPOGRAPHY.medium,
+    },
 
-  largeSubtitle: {
-    fontSize: TYPOGRAPHY.base,
-    lineHeight: 22,
-  },
+    defaultSubtitle: {
+      fontSize: responsiveFontSize(14),
+    },
 
-  minimalSubtitle: {
-    fontSize: TYPOGRAPHY.xs,
-    color: "#999999",
-  },
+    largeSubtitle: {
+      fontSize: responsiveFontSize(16),
+      lineHeight: responsiveFontSize(20),
+    },
 
-  centeredSubtitle: {
-    textAlign: "center",
-  },
+    minimalSubtitle: {
+      fontSize: responsiveFontSize(12),
+      color: "#999999",
+    },
 
-  compactSubtitle: {
-    fontSize: TYPOGRAPHY.xs,
-    color: "#888888",
-  },
+    centeredSubtitle: {
+      textAlign: "center",
+    },
 
-  // حاوية الأزرار
-  actionsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-    minWidth: 56,
-  },
+    compactSubtitle: {
+      fontSize: responsiveFontSize(12),
+      color: "#888888",
+    },
 
-  actionItem: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    // حاوية الأزرار
+    actionsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: isMobileSize ? 4 : 6,
+      minWidth: isMobileSize ? 40 : 56,
+      flexWrap: "nowrap",
+    },
 
-  // التأثيرات البصرية
-  elevated: {
-    ...createShadowStyle({
-      color: "#000",
-      offset: { width: 0, height: 2 },
-      opacity: 0.1,
-      radius: 8,
-      elevation: 4,
-    }),
-  },
+    actionItem: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: isMobileSize ? 36 : 40,
+      height: isMobileSize ? 36 : 40,
+      borderRadius: isMobileSize ? 8 : 10,
+      overflow: "hidden",
+    },
 
-  bordered: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-  },
-});
+    // التأثيرات البصرية
+    elevated: {
+      ...createShadowStyle({
+        color: "#000",
+        offset: { width: 0, height: 2 },
+        opacity: 0.1,
+        radius: 8,
+        elevation: 4,
+      }),
+    },
+
+    bordered: {
+      borderBottomWidth: 1,
+      borderBottomColor: "#F0F0F0",
+    },
+  });
+}

@@ -57,6 +57,7 @@ import { generateTraceId, logTrace } from "@/utils/errorHandling";
 import LanguageToggle from "@/components/LanguageToggle";
 import ModernHeader from "@/components/ModernHeader";
 import LocalizedRow from "@/components/LocalizedRow";
+import IconButton from "@/components/IconButton";
 import { clearCache, CACHE_KEYS } from "@/utils/cacheManager";
 import { persistentWriteQueue } from "@/utils/persistentWriteQueue";
 import { getApiUrl, safeFetch, isBackendAvailable, createAuthHeaders, createFetchOptions } from "@/utils/apiConfig";
@@ -753,17 +754,18 @@ export default function MedicationsScreen() {
           backgroundColor="#FFFFFF"
           textColor="#1A1A1A"
           rightActions={[
+            <IconButton
+              key="add"
+              icon={<Icon name="add" size={22} color={COLORS.white} />}
+              onPress={() => setModalVisible(true)}
+              variant="primary"
+              size="small"
+              accessibilityLabel={t("addMedication")}
+            />,
             <LanguageToggle
               key="languageToggle"
               onLanguageChange={handleLanguageChange}
-            />,
-            <Button
-              key="addMedication"
-              title={t("addMedication")}
-              onPress={() => setModalVisible(true)}
-              variant="primary"
-              style={styles.addButton}
-              icon={<Icon name="add" size={24} color="#FFFFFF" />}
+              compact={true}
             />,
           ]}
         />

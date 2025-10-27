@@ -42,6 +42,7 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import ModernHeader from "@/components/ModernHeader";
 import LanguageToggle from "@/components/LanguageToggle";
+import IconButton from "@/components/IconButton";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { generateTraceId, logTrace } from "@/utils/errorHandling";
@@ -550,17 +551,18 @@ export default function HealthScreen() {
           backgroundColor="#FFFFFF"
           textColor="#1A1A1A"
           rightActions={[
+            <IconButton
+              key="add"
+              icon={<Icon name="add" size={22} color={COLORS.white} />}
+              onPress={() => setModalVisible(true)}
+              variant="primary"
+              size="small"
+              accessibilityLabel={t("addSymptom")}
+            />,
             <LanguageToggle
               key="languageToggle"
               onLanguageChange={handleLanguageChange}
-            />,
-            <Button
-              key="addSymptom"
-              title={t("addSymptom")}
-              onPress={() => setModalVisible(true)}
-              variant="primary"
-              style={styles.addButton}
-              icon={<Icon name="add" size={24} color="#FFFFFF" />}
+              compact={true}
             />,
           ]}
         />

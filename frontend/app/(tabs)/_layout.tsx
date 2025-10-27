@@ -8,6 +8,7 @@ import { useData } from "@/contexts/DataContext";
 import { useIsRTL } from "@/utils/useIsRTL";
 import { TYPOGRAPHY } from "@/utils/modernStyles";
 import { createShadowStyle } from "@/utils/shadowStyles";
+import { responsiveIconSize, responsiveFontSize } from "@/utils/responsive";
 
 interface TabConfig {
   name: string;
@@ -81,7 +82,7 @@ export default function TabLayout() {
     () => ({
       fontFamily: "System",
       fontWeight: "600" as "600",
-      fontSize: 12,
+      fontSize: responsiveFontSize(11),
       marginTop: 6,
       textAlign: "center" as const,
       writingDirection: (currentIsRTL ? "rtl" : "ltr") as "rtl" | "ltr",
@@ -141,25 +142,28 @@ export default function TabLayout() {
 
   const renderTabIcon =
     (config: TabConfig) =>
-    ({ color, size, focused }: any) => (
-      <View style={styles.iconContainer}>
-        <Icon
-          name={config.iconName}
-          color={focused ? config.color : "#9E9E9E"}
-          size={focused ? size + 2 : size}
-          style={[
-            styles.icon,
-            focused && styles.iconFocused,
-            currentIsRTL && styles.iconRTL,
-          ]}
-        />
-        {focused && (
-          <View
-            style={[styles.activeIndicator, { backgroundColor: config.color }]}
+    ({ color, focused }: any) => {
+      const iconSize = responsiveIconSize(24);
+      return (
+        <View style={styles.iconContainer}>
+          <Icon
+            name={config.iconName}
+            color={focused ? config.color : "#9E9E9E"}
+            size={focused ? iconSize + 2 : iconSize}
+            style={[
+              styles.icon,
+              focused && styles.iconFocused,
+              currentIsRTL && styles.iconRTL,
+            ]}
           />
-        )}
-      </View>
-    );
+          {focused && (
+            <View
+              style={[styles.activeIndicator, { backgroundColor: config.color }]}
+            />
+          )}
+        </View>
+      );
+    };
 
   return (
     <AuthGuard>

@@ -303,6 +303,26 @@ export interface Translations {
   risks: string;
   overallSafety: string;
   appLogoAlt: string;
+
+  // Onboarding
+  onboardingNext: string;
+  onboardingSkip: string;
+  onboardingGetStarted: string;
+  onboardingWelcomeTitle: string;
+  onboardingWelcomeSubtitle: string;
+  onboardingWelcomeDescription: string;
+  onboardingLabsTitle: string;
+  onboardingLabsSubtitle: string;
+  onboardingLabsDescription: string;
+  onboardingMedsTitle: string;
+  onboardingMedsSubtitle: string;
+  onboardingMedsDescription: string;
+  onboardingHealthTitle: string;
+  onboardingHealthSubtitle: string;
+  onboardingHealthDescription: string;
+  onboardingFinalTitle: string;
+  onboardingFinalSubtitle: string;
+  onboardingFinalDescription: string;
 }
 
 const arabicTranslations: Translations = {
@@ -606,6 +626,34 @@ const arabicTranslations: Translations = {
   risks: 'المخاطر',
   overallSafety: 'الأمان العام',
   appLogoAlt: 'شعار HamlyMD',
+
+  // Onboarding - Welcome Screen (1/5)
+  onboardingNext: 'التالي',
+  onboardingSkip: 'تخطي',
+  onboardingGetStarted: 'ابدأ الآن',
+  onboardingWelcomeTitle: 'مرحباً بك في HamlyMD',
+  onboardingWelcomeSubtitle: 'رفيقتك الموثوقة طوال رحلة حملك',
+  onboardingWelcomeDescription: 'تطبيق شامل مصمم خصيصاً لمساعدتك في كل مرحلة من مراحل الحمل بمعلومات طبية موثوقة ورعاية شخصية',
+
+  // Onboarding - Lab Results Screen (2/5)
+  onboardingLabsTitle: 'تحليل ذكي لنتائج المختبر',
+  onboardingLabsSubtitle: 'افهمي فحوصاتك الطبية بسهولة',
+  onboardingLabsDescription: 'تحميل نتائج الفحوصات والحصول على شرح مفصل وسهل الفهم بالذكاء الاصطناعي للاطمئنان على صحتك وصحة جنينك',
+
+  // Onboarding - Medications Screen (3/5)
+  onboardingMedsTitle: 'سلامة الأدوية أثناء الحمل',
+  onboardingMedsSubtitle: 'تحققي من أمان أدويتك',
+  onboardingMedsDescription: 'احصلي على تقييم فوري لسلامة أي دواء أثناء الحمل مع توصيات طبية معتمدة لحمايتك أنت وجنينك',
+
+  // Onboarding - Health Tracking Screen (4/5)
+  onboardingHealthTitle: 'تتبع شامل للصحة والأعراض',
+  onboardingHealthSubtitle: 'راقبي تطور حملك يومياً',
+  onboardingHealthDescription: 'سجلي الأعراض، الوزن، ضغط الدم وغيرها، واحصلي على تحليلات ذكية ونصائح صحية مخصصة لحالتك',
+
+  // Onboarding - Get Started Screen (5/5)
+  onboardingFinalTitle: 'ابدأي رحلتك الآن!',
+  onboardingFinalSubtitle: 'كل ما تحتاجينه في مكان واحد',
+  onboardingFinalDescription: 'انضمي لآلاف الأمهات اللواتي يثقن في HamlyMD لحمل آمن وصحي. ابدأي الآن!',
 };
 
 const englishTranslations: Translations = {
@@ -909,6 +957,34 @@ const englishTranslations: Translations = {
   risks: 'Risks',
   overallSafety: 'Overall Safety',
   appLogoAlt: 'HamlyMD Logo',
+
+  // Onboarding - Welcome Screen (1/5)
+  onboardingNext: 'Next',
+  onboardingSkip: 'Skip',
+  onboardingGetStarted: 'Get Started',
+  onboardingWelcomeTitle: 'Welcome to Hamly',
+  onboardingWelcomeSubtitle: 'Your Smart Health Companion',
+  onboardingWelcomeDescription: 'AI-powered personalized healthcare to support you throughout your pregnancy journey. Track your health with confidence and peace of mind',
+
+  // Onboarding - Lab Results Screen (2/5)
+  onboardingLabsTitle: 'Understand Lab Results',
+  onboardingLabsSubtitle: 'Smart Medical Analysis',
+  onboardingLabsDescription: 'Upload a photo or PDF of your lab results, and AI will extract the data and provide detailed medical explanations in simple language',
+
+  // Onboarding - Medications Screen (3/5)
+  onboardingMedsTitle: 'Medication Safety',
+  onboardingMedsSubtitle: 'Smart Safety Assessment',
+  onboardingMedsDescription: 'Track your medications and get instant analysis of their safety during pregnancy with personalized medical recommendations',
+
+  // Onboarding - Health Tracking Screen (4/5)
+  onboardingHealthTitle: 'Track Symptoms',
+  onboardingHealthSubtitle: 'Smart Health Monitoring',
+  onboardingHealthDescription: 'Log daily symptoms and receive instant medical analysis considering your pregnancy week and recent lab results',
+
+  // Onboarding - Get Started Screen (5/5)
+  onboardingFinalTitle: 'Everything You Need',
+  onboardingFinalSubtitle: 'In One Place',
+  onboardingFinalDescription: 'Start a safe and confident pregnancy journey with comprehensive health tracking and AI-powered medical support',
 };
 
 // Language state

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import {
   useLocalizedStyles,
@@ -14,6 +15,7 @@ import {
   TYPOGRAPHY,
 } from "@/utils/modernStyles";
 import { createShadowStyle } from "@/utils/shadowStyles";
+import { responsiveFontSize } from "@/utils/responsive";
 
 interface ButtonProps {
   title: string;
@@ -43,7 +45,13 @@ export default function Button({
   iconPosition = "left",
 }: ButtonProps) {
   const localizedStyles = useLocalizedStyles();
-  const styles = getStyles(localizedStyles);
+  const { width } = useWindowDimensions();
+  
+  // Use runtime window dimensions instead of module-level static value
+  const isMobileSize = width < 768;
+  
+  // Generate dynamic styles based on current screen size
+  const styles = useMemo(() => getStyles(localizedStyles, isMobileSize), [localizedStyles, isMobileSize]);
 
   const isDisabled = disabled || loading;
 
@@ -92,7 +100,7 @@ export default function Button({
   );
 }
 
-function getStyles(localizedStyles: ReturnType<typeof useLocalizedStyles>) {
+function getStyles(localizedStyles: ReturnType<typeof useLocalizedStyles>, isMobileSize: boolean) {
   return StyleSheet.create({
     button: {
       flexDirection: localizedStyles.row as any,
@@ -150,21 +158,24 @@ function getStyles(localizedStyles: ReturnType<typeof useLocalizedStyles>) {
 
     // Sizes
     small: {
-      minHeight: 36,
-      paddingHorizontal: SPACING.md,
+      minHeight: isMobileSize ? 28 : 32,
+      paddingHorizontal: isMobileSize ? SPACING.xs : SPACING.sm,
       borderRadius: 8,
+      paddingVertical: isMobileSize ? 4 : 6,
     },
 
     medium: {
-      minHeight: 44,
-      paddingHorizontal: SPACING.lg,
-      borderRadius: 12,
+      minHeight: isMobileSize ? 32 : 36,
+      paddingHorizontal: isMobileSize ? SPACING.sm : SPACING.md,
+      borderRadius: 10,
+      paddingVertical: isMobileSize ? 6 : 8,
     },
 
     large: {
-      minHeight: 52,
-      paddingHorizontal: SPACING.xl,
-      borderRadius: 14,
+      minHeight: isMobileSize ? 38 : 44,
+      paddingHorizontal: isMobileSize ? SPACING.md : SPACING.lg,
+      borderRadius: 12,
+      paddingVertical: isMobileSize ? 8 : 10,
     },
 
     // States
@@ -206,15 +217,15 @@ function getStyles(localizedStyles: ReturnType<typeof useLocalizedStyles>) {
 
     // Size-specific title styles
     smallTitle: {
-      fontSize: 14,
+      fontSize: responsiveFontSize(11),
     },
 
     mediumTitle: {
-      fontSize: 16,
+      fontSize: responsiveFontSize(13),
     },
 
     largeTitle: {
-      fontSize: 18,
+      fontSize: responsiveFontSize(15),
     },
 
     loadingIndicator: {

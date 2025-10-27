@@ -21,7 +21,7 @@ import {
   updatePregnancy,
   setActivePregnancy,
 } from "@/utils/supabaseStorage";
-import { t, isRTL } from "@/utils/i18n";
+import { t, isRTL, getCurrentLanguage, setLanguage } from "@/utils/i18n";
 import { useIsRTL } from "@/utils/useIsRTL";
 import {
   COLORS,
@@ -44,6 +44,8 @@ import ScreenTransition from "@/components/ui/ScreenTransition";
 import AnimatedCard from "@/components/ui/AnimatedCard";
 import Section from "@/components/ui/Section";
 import AnimatedButton from "@/components/ui/AnimatedButton";
+import IconButton from '@/components/IconButton'; // Import IconButton
+
 export default function ProfileScreen() {
   const {
     activePregnancy: contextActivePregnancy,
@@ -437,6 +439,7 @@ export default function ProfileScreen() {
           <LanguageToggle
             key="languageToggle"
             onLanguageChange={handleLanguageChange}
+            compact={true}
           />,
           <TouchableOpacity
             key="signOut"
@@ -448,13 +451,14 @@ export default function ProfileScreen() {
           // Conditionally show edit button only if there's an active pregnancy
           ...(localActivePregnancy
             ? [
-                <TouchableOpacity
+                <IconButton
                   key="edit"
-                  style={styles.editButton}
+                  icon={<Icon name="edit" size={20} color="#FFFFFF" />}
                   onPress={openEditModal}
-                >
-                  <Icon name="edit" size={20} color="#FFFFFF" />
-                </TouchableOpacity>,
+                  variant="primary" // Assuming primary variant for edit button
+                  size="medium"
+                  accessibilityLabel={t('edit')}
+                />,
               ]
             : []),
         ]}

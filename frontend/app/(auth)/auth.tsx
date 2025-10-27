@@ -12,12 +12,19 @@ import {
   Alert,
   ActivityIndicator,
   Animated,
+  Image,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useAuth } from "@/contexts/AuthContext";
 import { t, isRTL } from "@/utils/i18n";
 import { createShadowStyle } from "@/utils/shadowStyles";
+import {
+  responsiveFontSize,
+  responsiveIconSize,
+  scale,
+} from "@/utils/responsive";
+import { getSpacing, isWeb } from "@/utils/responsive"; // Import responsive utilities
 
 type AuthMode = "signin" | "signup" | "reset";
 
@@ -337,9 +344,11 @@ export default function AuthScreen() {
         >
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <View style={styles.logoCircle}>
-                <Text style={styles.logoText}>H</Text>
-              </View>
+              <Image
+                source={require("../../assets/images/hamly transparent logo.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.title}>
               {mode === "signin"
@@ -362,7 +371,7 @@ export default function AuthScreen() {
                 <View style={styles.inputWrapper}>
                   <Icon
                     name="person"
-                    size={20}
+                    size={responsiveIconSize(20)}
                     color="#666666"
                     style={styles.inputIcon}
                   />
@@ -376,11 +385,12 @@ export default function AuthScreen() {
                   />
                 </View>
               </View>
-            )}<View style={styles.inputContainer}>
+            )}
+            <View style={styles.inputContainer}>
               <View style={styles.inputWrapper}>
                 <Icon
                   name="email"
-                  size={20}
+                  size={responsiveIconSize(20)}
                   color="#666666"
                   style={styles.inputIcon}
                 />
@@ -395,12 +405,13 @@ export default function AuthScreen() {
                   textContentType="emailAddress"
                 />
               </View>
-            </View>{mode !== "reset" && (
+            </View>
+            {mode !== "reset" && (
               <View style={styles.inputContainer}>
                 <View style={styles.inputWrapper}>
                   <Icon
                     name="lock"
-                    size={20}
+                    size={responsiveIconSize(20)}
                     color="#666666"
                     style={styles.inputIcon}
                   />
@@ -417,9 +428,17 @@ export default function AuthScreen() {
                     onPress={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <Icon name="visibility-off" size={20} color="#666666" />
+                      <Icon
+                        name="visibility-off"
+                        size={responsiveIconSize(20)}
+                        color="#666666"
+                      />
                     ) : (
-                      <Icon name="visibility" size={20} color="#666666" />
+                      <Icon
+                        name="visibility"
+                        size={responsiveIconSize(20)}
+                        color="#666666"
+                      />
                     )}
                   </TouchableOpacity>
                 </View>
@@ -506,55 +525,39 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 40,
-    paddingBottom: Platform.OS === "android" ? 100 : 40,
+    paddingHorizontal: getSpacing(24), // Adjusted padding
+    paddingVertical: getSpacing(40), // Adjusted padding
+    paddingBottom: Platform.OS === "android" ? getSpacing(100) : getSpacing(40), // Adjusted padding
   },
   header: {
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: getSpacing(40), // Adjusted margin
   },
   logoContainer: {
-    marginBottom: 24,
+    marginBottom: getSpacing(24), // Adjusted margin
   },
-  logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#E91E63",
-    alignItems: "center",
-    justifyContent: "center",
-    ...createShadowStyle({
-      color: "#E91E63",
-      offset: { width: 0, height: 4 },
-      opacity: 0.3,
-      radius: 8,
-      elevation: 8,
-    }),
-  },
-  logoText: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#FFFFFF",
+  logoImage: {
+    width: scale(120),
+    height: scale(120),
   },
   title: {
-    fontSize: 28,
+    fontSize: responsiveFontSize(24),
     fontWeight: "bold",
     color: "#1A1A1A",
-    marginBottom: 8,
+    marginBottom: getSpacing(8), // Adjusted margin
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     color: "#666666",
     textAlign: "center",
-    lineHeight: 24,
+    lineHeight: responsiveFontSize(22),
   },
   form: {
-    marginBottom: 32,
+    marginBottom: getSpacing(32), // Adjusted margin
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: getSpacing(20), // Adjusted margin
   },
   inputWrapper: {
     flexDirection: "row",
@@ -563,15 +566,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E5E5E5",
-    paddingHorizontal: 16,
+    paddingHorizontal: getSpacing(16), // Adjusted padding
     height: 56,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: getSpacing(12), // Adjusted margin
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     color: "#1A1A1A",
   },
   eyeIcon: {
@@ -583,7 +586,7 @@ const styles = StyleSheet.create({
     height: 56,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: getSpacing(8), // Adjusted margin
     ...createShadowStyle({
       color: "#E91E63",
       offset: { width: 0, height: 2 },
@@ -597,17 +600,17 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: responsiveFontSize(15),
     fontWeight: "600",
   },
   linkButton: {
     alignItems: "center",
-    marginTop: 16,
+    marginTop: getSpacing(16), // Adjusted margin
     padding: 8,
   },
   linkText: {
     color: "#E91E63",
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     fontWeight: "500",
   },
   footer: {
@@ -618,16 +621,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     color: "#666666",
   },
   footerLink: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     color: "#E91E63",
     fontWeight: "600",
   },
   messageContainer: {
-    marginBottom: 16,
+    marginBottom: getSpacing(16), // Adjusted margin
   },
   errorContainer: {
     flexDirection: "row",
@@ -635,19 +638,19 @@ const styles = StyleSheet.create({
     borderColor: "#FF6B6B",
     borderWidth: 1,
     borderRadius: 12,
-    padding: 16,
+    padding: getSpacing(16), // Adjusted padding
     alignItems: "flex-start",
   },
   errorIcon: {
-    fontSize: 20,
-    marginRight: 12,
+    fontSize: responsiveFontSize(18),
+    marginRight: getSpacing(12), // Adjusted margin
     marginTop: 2,
   },
   errorText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     color: "#C62828",
-    lineHeight: 20,
+    lineHeight: responsiveFontSize(18),
     textAlign: "right",
     fontWeight: "500",
   },
@@ -657,19 +660,19 @@ const styles = StyleSheet.create({
     borderColor: "#E91E63",
     borderWidth: 1,
     borderRadius: 12,
-    padding: 16,
+    padding: getSpacing(16), // Adjusted padding
     alignItems: "flex-start",
   },
   successIcon: {
-    fontSize: 20,
-    marginRight: 12,
+    fontSize: responsiveFontSize(18),
+    marginRight: getSpacing(12), // Adjusted margin
     marginTop: 2,
   },
   successText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: responsiveFontSize(13),
     color: "#2E7D32",
-    lineHeight: 20,
+    lineHeight: responsiveFontSize(18),
     textAlign: "right",
     fontWeight: "500",
   },

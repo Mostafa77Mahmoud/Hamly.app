@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useSegments } from 'expo-router';
@@ -16,6 +16,16 @@ if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
   // Initialize deep tracing system
   import('../utils/traceInit').then(({ initializeTracing }) => {
     initializeTracing();
+  });
+
+  // Add reset function for testing welcome screens
+  import('../utils/welcomeTutorial').then(({ resetWelcomeTutorial }) => {
+    (window as any).resetWelcome = async () => {
+      await resetWelcomeTutorial();
+      console.log('✅ Welcome tutorial reset! Reloading...');
+      window.location.href = '/';
+    };
+    console.log('🔄 Use resetWelcome() to test welcome screens again');
   });
 }
 import { I18nManager, Platform } from 'react-native';
@@ -46,28 +56,98 @@ function RootLayoutNav() {
   const { session, loading, isNewUser } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [hasSeenWelcome, setHasSeenWelcome] = useState<boolean | null>(null);
+
+  // Check if user has seen welcome tutorial
+  useEffect(() => {
+    const checkWelcomeTutorial = async () => {
+      const { hasSeenWelcomeTutorial } = await import('@/utils/welcomeTutorial');
+      const seen = await hasSeenWelcomeTutorial();
+      console.log('[ROOT_LAYOUT] Welcome tutorial status:', seen);
+      setHasSeenWelcome(seen);
+    };
+    checkWelcomeTutorial();
+    
+    // Listen for storage changes (for web)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'hasSeenWelcomeTutorial' && e.newValue === 'true') {
+        console.log('[ROOT_LAYOUT] Welcome tutorial marked as seen via storage event');
+        setHasSeenWelcome(true);
+      }
+    };
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
+    }
+  }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      console.log('[ROOT_LAYOUT] Waiting for auth...', { loading });
+      return;
+    }
+
+    // Wait until hasSeenWelcome is determined (not null)
+    if (hasSeenWelcome === null) {
+      console.log('[ROOT_LAYOUT] Waiting for welcome status...', { hasSeenWelcome });
+      return;
+    }
 
     const inAuthGroup = segments[0] === '(auth)';
     const inOnboardingGroup = segments[0] === '(onboarding)';
     const inTabsGroup = segments[0] === '(tabs)';
+    const inWelcomeGroup = segments[0] === '(welcome)';
+    const inRootIndex = segments.length === 0 || segments[0] === 'index';
 
-    if (!session && !inAuthGroup) {
-      // Redirect to auth if not signed in
-      router.replace('/(auth)/auth');
-    } else if (session && isNewUser && !inOnboardingGroup) {
-      // Redirect new users to onboarding
-      router.replace('/(onboarding)/setup');
-    } else if (session && !isNewUser && !inTabsGroup) {
-      // Redirect existing users to main app
+    console.log('[ROOT_LAYOUT] Navigation check:', {
+      hasSeenWelcome,
+      session: !!session,
+      isNewUser,
+      segments,
+      currentSegment: segments[0],
+      inWelcomeGroup,
+      inAuthGroup,
+      inRootIndex,
+    });
+
+    // Priority 1: First time user - MUST show welcome tutorial
+    if (hasSeenWelcome === false) {
+      if (!inWelcomeGroup) {
+        console.log('[ROOT_LAYOUT] 🎯 First time user - Redirecting to welcome...');
+        router.replace('/(welcome)');
+      }
+      return; // Stop here, don't check other conditions
+    }
+
+    // Priority 2: Not signed in - show auth
+    if (!session) {
+      if (!inAuthGroup) {
+        console.log('[ROOT_LAYOUT] 🔐 No session - Redirecting to auth...');
+        router.replace('/(auth)/auth');
+      }
+      return;
+    }
+
+    // Priority 3: Signed in, new user - show pregnancy setup
+    if (isNewUser) {
+      if (!inOnboardingGroup) {
+        console.log('[ROOT_LAYOUT] 🤰 New user - Redirecting to onboarding setup...');
+        router.replace('/(onboarding)/setup');
+      }
+      return;
+    }
+
+    // Priority 4: Signed in, existing user - show main app
+    if (!inTabsGroup) {
+      console.log('[ROOT_LAYOUT] 📊 Existing user - Redirecting to main app...');
       router.replace('/(tabs)/lab-results');
     }
-  }, [session, segments, loading, isNewUser]);
+  }, [session, segments, loading, isNewUser, hasSeenWelcome]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(welcome)" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
